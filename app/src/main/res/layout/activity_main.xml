@@ -7,13 +7,96 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/btnPrev"
+        android:layout_width="65dp"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="32dp"
+        android:text="Prev"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCurrentTrack"/>
 
+    <Button
+        android:id="@+id/btnPlay"
+        android:layout_width="68dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:text="Play"
+        app:layout_constraintStart_toEndOf="@+id/btnPrev"
+        app:layout_constraintTop_toBottomOf="@+id/tvCurrentTrack"/>
+
+    <Button
+        android:id="@+id/btnNext"
+        android:layout_width="72dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="32dp"
+        android:text="Next"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCurrentTrack"/>
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="359dp"
+        android:layout_height="211dp"
+        android:layout_marginTop="16dp"
+        android:checkedButton="@+id/rbMediaPlayer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RadioButton
+            android:id="@+id/rbMediaPlayer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Android MediaPlayer"/>
+
+        <RadioButton
+            android:id="@+id/rbFFmpeg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="FFmpeg"/>
+
+        <RadioButton
+            android:id="@+id/rbMediaPlayerExtended"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="MediaPlayer Extended"/>
+
+        <RadioButton
+            android:id="@+id/rbExoPlayer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="ExoPlayer"/>
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/tvCurrentTrack"
+        android:layout_width="340dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup"/>
+
+    <Button
+        android:id="@+id/btnPause"
+        android:layout_width="75dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="32dp"
+        android:text="Pause"
+        app:layout_constraintEnd_toStartOf="@+id/btnNext"
+        app:layout_constraintHorizontal_bias="0.909"
+        app:layout_constraintStart_toEndOf="@+id/btnPlay"
+        app:layout_constraintTop_toBottomOf="@+id/tvCurrentTrack"/>
 </android.support.constraint.ConstraintLayout>

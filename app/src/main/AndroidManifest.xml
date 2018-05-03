@@ -16,6 +16,27 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".MediaPlayerService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
+        <service
+            android:name=".FFmpegService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
+        <service
+            android:name=".MediaPlayerExtendedService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
+        <service
+            android:name=".ExoService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
     </application>
 
 </manifest>

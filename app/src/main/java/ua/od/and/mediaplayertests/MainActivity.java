@@ -1,5 +1,6 @@
 package ua.od.and.mediaplayertests;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -17,7 +18,7 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    public static ArrayList<String> trackList;
+    private ArrayList<String> trackList;
     private int currentMode = Constants.MODE_MP;
 
     @BindView(R.id.btnPrev)
@@ -79,6 +80,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         trackList.add("https://tracks.louder.me/5aea4a1fb707d5002de29b88/stream/sample");
         trackList.add("https://tracks.louder.me/5ae967d7b707d5002de20712/stream/sample");
         trackList.add("https://tracks.louder.me/5ae966f68746e7002d64912d/stream/sample");
+
+        Intent intent = new Intent(this, MediaPlayerService.class);
+        intent.putExtra("data", trackList);
+        startService(intent);
     }
 
     @Override

@@ -46,7 +46,10 @@ public class MediaPlayerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        trackList = intent.getStringArrayListExtra("data");
+        if ((intent != null)
+                && (intent.hasExtra("data"))) {
+            trackList = intent.getStringArrayListExtra("data");
+        }
         return super.onStartCommand(intent, flags, startId);
 
     }
@@ -62,13 +65,17 @@ public class MediaPlayerService extends Service {
         if (event.getTo() == MODE_MP) {
             switch (event.getCode()) {
                 case PLAY:
-                    Log.i(Constants.LOG_TAG, "PLAY");
-                    if (mp == null) {
-                        mp = new MediaPlayer();
+                    if (currentStatus == Constants.PAUSE) {
+                        mp.start();
                     } else {
-                        mp.reset();
+                        if (mp == null) {
+                            mp = new MediaPlayer();
+                        } else {
+                            mp.reset();
+                        }
+                        prepareAndPlay();
+                        //Log.i(Constants.LOG_TAG, "PLAY");
                     }
-                    prepareAndPlay();
                     break;
                 case PAUSE:
                     Log.i(Constants.LOG_TAG, "PAUSE");
@@ -138,9 +145,10 @@ public class MediaPlayerService extends Service {
     }
 
     private void prepareAndPlay() {
+        currentStatus = Constants.INIT;
         if (mp == null) {
             mp = new MediaPlayer();
-        }else{
+        } else {
             mp.reset();
         }
         try {
@@ -160,11 +168,7 @@ public class MediaPlayerService extends Service {
                 Log.i(LOG_TAG, "Playing");
             }
         });
-        currentStatus = Constants.INIT;
         mp.prepareAsync();
         Log.i(LOG_TAG, "prepareAsync " + currentTrackNo);
-        return;
     }
-
-
 }

@@ -134,7 +134,7 @@ public class MediaPlayerService extends Service {
                 case STOP:
                     Log.i(Constants.LOG_TAG, "STOP");
                     if (mp != null) {
-                        mp.reset();
+                        mp.release();
                         mp = null;
                     }
                     break;

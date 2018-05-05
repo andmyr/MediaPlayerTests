@@ -123,7 +123,7 @@ public class FFmpegService extends Service {
                             prepareAndPlay();
                             break;
                         case Constants.INIT:
-                            mp.reset();
+                            mp.release();
                             mp = null;
                             mp = new FFmpegMediaPlayer();
                             prepareAndPlay();
@@ -133,7 +133,7 @@ public class FFmpegService extends Service {
                 case STOP:
                     Log.i(Constants.LOG_TAG, "STOP");
                     if (mp != null) {
-                        mp.reset();
+                        mp.release();
                         mp = null;
                     }
                     break;

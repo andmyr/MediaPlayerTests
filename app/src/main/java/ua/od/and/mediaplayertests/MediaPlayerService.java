@@ -123,7 +123,8 @@ public class MediaPlayerService extends Service {
                             prepareAndPlay();
                             break;
                         case Constants.INIT:
-                            mp.reset();
+                            Log.i(LOG_TAG, "prepareAndPlay while init");
+                            mp.release();
                             mp = null;
                             mp = new MediaPlayer();
                             prepareAndPlay();

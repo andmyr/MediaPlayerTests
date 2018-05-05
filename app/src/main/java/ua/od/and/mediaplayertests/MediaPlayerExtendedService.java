@@ -17,6 +17,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static ua.od.and.mediaplayertests.Constants.INIT;
 import static ua.od.and.mediaplayertests.Constants.LOG_TAG;
 import static ua.od.and.mediaplayertests.Constants.MODE_MP_E;
 import static ua.od.and.mediaplayertests.Constants.NEXT;
@@ -72,11 +73,11 @@ public class MediaPlayerExtendedService extends Service {
                         mp.start();
                     } else {
                         //Log.i(Constants.LOG_TAG, "PLAY");
-                        if (mp == null) {
+                       /* if (mp == null) {
                             mp = new MediaPlayer();
                         } else {
                             mp.reset();
-                        }
+                        }*/
                         prepareAndPlay();
                     }
                     break;
@@ -103,10 +104,10 @@ public class MediaPlayerExtendedService extends Service {
                             prepareAndPlay();
                             break;
                         case Constants.INIT:
-                            Log.i(LOG_TAG, "Recreating mp");
-                            mp.reset();
-                            mp = null;
-                            mp = new MediaPlayer();
+                            Log.i(LOG_TAG, "prepareAndPlay while init");
+                            mp.release();
+                            /*mp = null;
+                            mp = new MediaPlayer();*/
                             prepareAndPlay();
                             break;
                     }
@@ -149,10 +150,13 @@ public class MediaPlayerExtendedService extends Service {
     }
 
     private void prepareAndPlay() {
+        //Log.i(LOG_TAG, "prepareAndPlay");
         if (mp == null) {
             mp = new MediaPlayer();
+            Log.i(LOG_TAG, "mp = new MediaPlayer()");
         } else {
             mp.reset();
+            Log.i(LOG_TAG, "mp.reset()");
         }
         try {
             Uri uri = Uri.parse(trackList.get(currentTrackNo));
@@ -168,11 +172,21 @@ public class MediaPlayerExtendedService extends Service {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
                 Log.i(LOG_TAG, "OnPreparedListener onPrepared");
-                currentStatus = Constants.PLAY;
-                mp.start();
-                Log.i(LOG_TAG, "Playing");
+                if (currentStatus == INIT) {
+                    currentStatus = Constants.PLAY;
+                    mp.start();
+                    Log.i(LOG_TAG, "Playing");
+                }
             }
         });
+        mp.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mp, int what, int extra) {
+                Log.i(LOG_TAG, "Error " + what + " " + extra);
+                return false;
+            }
+        });
+
         currentStatus = Constants.INIT;
         mp.prepareAsync();
         Log.i(LOG_TAG, "prepareAsync " + currentTrackNo);

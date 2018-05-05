@@ -8,11 +8,17 @@ import android.util.Log;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 
 import org.greenrobot.eventbus.EventBus;
@@ -21,6 +27,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
+import static ua.od.and.mediaplayertests.Constants.LOG_TAG;
 import static ua.od.and.mediaplayertests.Constants.MODE_EXO;
 import static ua.od.and.mediaplayertests.Constants.NEXT;
 import static ua.od.and.mediaplayertests.Constants.PAUSE;
@@ -50,7 +57,7 @@ public class ExoService extends Service {
     public void onCreate() {
         super.onCreate();
         EventBus.getDefault().register(this);
-
+        initializePlayer();
         //initializePlayer();
     }
 
@@ -77,30 +84,19 @@ public class ExoService extends Service {
         if (event.getTo() == MODE_EXO) {
             switch (event.getCode()) {
                 case PLAY:
-                    /*if (currentStatus == Constants.PAUSE) {
-                        mp.start();
+                    if (currentStatus == Constants.PAUSE) {
+                        mp.setPlayWhenReady(true);
                     } else {
-                        if (mp == null) {
-                            mp = new MediaPlayer();
-                        } else {
-                            mp.reset();
-                        }
-                        prepareAndPlay();
+                        setTrack();
                         //Log.i(Constants.LOG_TAG, "PLAY");
-                    }*/
-
-                    initializePlayer();
-
-
+                    }
                     break;
                 case PAUSE:
-                    Log.i(Constants.LOG_TAG, "PAUSE");
-                    /*if (currentStatus == Constants.PLAY) {
+                    Log.i(LOG_TAG, "PAUSE");
+                    if (currentStatus == Constants.PLAY) {
                         currentStatus = Constants.PAUSE;
-                        mp.pause();
-                    }*/
-
-                    mp.setPlayWhenReady(false);
+                        mp.setPlayWhenReady(false);
+                    }
                     break;
                 case NEXT:
                     if (currentTrackNo < trackList.size() - 1) {
@@ -108,8 +104,13 @@ public class ExoService extends Service {
                     } else {
                         currentTrackNo = 0;
                     }
-                   /* Log.i(Constants.LOG_TAG, "NEXT " + currentTrackNo);
-                    switch (currentStatus) {
+                    Log.i(Constants.LOG_TAG, "NEXT " + currentTrackNo);
+                    if (currentStatus == PLAY) {
+                        mp.setPlayWhenReady(false);
+                        setTrack();
+                    }
+
+                   /* switch (currentStatus) {
                         case Constants.PAUSE:
                         case Constants.STOP:
                             break;
@@ -131,6 +132,11 @@ public class ExoService extends Service {
                     } else {
                         currentTrackNo = trackList.size() - 1;
                     }
+                    Log.i(Constants.LOG_TAG, "PREV " + currentTrackNo);
+                    if (currentStatus == PLAY) {
+                        mp.setPlayWhenReady(false);
+                        setTrack();
+                    }
                     /*Log.i(Constants.LOG_TAG, "PREV " + currentTrackNo);
                     switch (currentStatus) {
                         case Constants.PAUSE:
@@ -149,14 +155,15 @@ public class ExoService extends Service {
                     }*/
                     break;
                 case STOP:
-                    Log.i(Constants.LOG_TAG, "STOP");
+                    Log.i(LOG_TAG, "STOP");
                     /*if (mp != null) {
                         mp.reset();
                         mp = null;
                     }*/
+                    mp.setPlayWhenReady(false);
                     break;
                 default: {
-                    Log.i(Constants.LOG_TAG, "Unknown command");
+                    Log.i(LOG_TAG, "Unknown command");
                 }
             }
         }
@@ -194,10 +201,16 @@ public class ExoService extends Service {
         mp = ExoPlayerFactory.newSimpleInstance(
                 new DefaultRenderersFactory(this),
                 new DefaultTrackSelector(), new DefaultLoadControl());
-        mp.setPlayWhenReady(playWhenReady);
-        Uri uri = Uri.parse(trackList.get(currentStatus));
+        //mp.setPlayWhenReady(playWhenReady);
+    }
+
+    private void setTrack() {
+        Uri uri = Uri.parse(trackList.get(currentTrackNo));
         MediaSource mediaSource = buildMediaSource(uri);
-        mp.prepare(mediaSource, true, false);
+        mp.prepare(mediaSource, true, true);
+        mp.setPlayWhenReady(true);
+        Log.i(LOG_TAG, "Prepare");
+        currentStatus = Constants.PLAY;
     }
 
     private MediaSource buildMediaSource(Uri uri) {
